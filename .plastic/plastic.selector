@@ -1,0 +1,4 @@
+repository "Knight of the dead 2025-02-20_10-31-59/Knight of the dead@6872731029622@cloud"
+  path "/"
+    br "/main"
+    co "/main"
