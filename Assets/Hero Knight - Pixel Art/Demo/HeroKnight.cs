@@ -8,7 +8,11 @@ public class HeroKnight : MonoBehaviour {
     [SerializeField] float      m_rollForce = 6.0f;
     [SerializeField] bool       m_noBlood = false;
     [SerializeField] GameObject m_slideDust;
-
+     [SerializeField] private Transform attackArea; // Referencia al área de ataque
+    [SerializeField] private float attackRange = 0.5f; // Rango de ataque
+    [SerializeField] private int attackDamage = 20; // Daño que hace el ataque
+    [SerializeField] private LayerMask enemyLayer; // Capa de enemigos
+    
     private Animator            m_animator;
     private Rigidbody2D         m_body2d;
     private Sensor_HeroKnight   m_groundSensor;
@@ -37,6 +41,10 @@ public class HeroKnight : MonoBehaviour {
         m_wallSensorR2 = transform.Find("WallSensor_R2").GetComponent<Sensor_HeroKnight>();
         m_wallSensorL1 = transform.Find("WallSensor_L1").GetComponent<Sensor_HeroKnight>();
         m_wallSensorL2 = transform.Find("WallSensor_L2").GetComponent<Sensor_HeroKnight>();
+        if (attackArea == null)
+    {
+        attackArea = transform.Find("AttackZone"); // Reemplaza con el nombre correcto del objeto
+    }
     }
 
     // Update is called once per frame
@@ -124,6 +132,7 @@ public class HeroKnight : MonoBehaviour {
 
             // Reset timer
             m_timeSinceAttack = 0.0f;
+            Attack();
         }
 
         // Block
@@ -192,4 +201,36 @@ public class HeroKnight : MonoBehaviour {
             dust.transform.localScale = new Vector3(m_facingDirection, 1, 1);
         }
     }
+    void Attack()
+    {
+    attackArea.gameObject.SetActive(true);
+
+    Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackArea.position, attackRange, enemyLayer);
+
+    foreach (Collider2D enemy in hitEnemies)
+    {
+      
+        enemy.GetComponent<Enemy>().Die();  // Matar al enemigo
+    }
+
+    StartCoroutine(DisableAttackArea());
 }
+
+
+    // Mostrar el área de ataque en el editor
+    void OnDrawGizmosSelected()
+    {
+        if (attackArea == null)
+            return;
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(attackArea.position, attackRange);
+    }
+    IEnumerator DisableAttackArea()
+{
+    yield return new WaitForSeconds(0.2f); // Espera 0.2 segundos (puedes ajustar este valor)
+    attackArea.gameObject.SetActive(false); // Desactiva el área de ataque
+}
+
+}
+
