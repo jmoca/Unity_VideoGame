@@ -44,14 +44,19 @@ public class Enemy : MonoBehaviour
 
     // Detecta cuando el jugador golpea al enemigo
     private void OnTriggerEnter2D(Collider2D collision)
+{
+    if (collision.CompareTag("Player")) 
     {
-        if (collision.CompareTag("Player"))
-        {
-            // Aquí debes agregar lógica para verificar si el jugador está atacando
-            // Si el jugador está atacando, mata al enemigo
-            Die();
-        }
+        // Si el enemigo toca al jugador, lo manda al respawn
+        StartCoroutine(RespawnPlayer(collision.gameObject));
     }
+    else if (collision.CompareTag("AttackZone")) 
+    {
+        // Si el jugador está atacando, mata al enemigo
+        Die();
+    }
+}
+
 
     // Método para destruir al enemigo instantáneamente
     public void Die()
