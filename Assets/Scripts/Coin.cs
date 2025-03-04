@@ -11,14 +11,13 @@ public class Coin : MonoBehaviour
 
         if (collision.CompareTag("Player")) 
         {
-            
-        
-                AudioSource.PlayClipAtPoint(MonedaSonido, transform.position);
-            
             Debug.Log("Moneda recogida, sumando puntos...");
             
             // Reproducir sonido
-            
+            if (MonedaSonido != null)
+            {
+                AudioSource.PlayClipAtPoint(MonedaSonido, transform.position);
+            }
             
             GameManager.instance.AddScore(points); // Sumar puntos
             Destroy(gameObject); // Destruir la moneda
